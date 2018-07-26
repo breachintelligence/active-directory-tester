@@ -51,7 +51,7 @@ chmod a+x active-directory-tester.sh
 Sample values:
 
 ```
-./active-directory-tester.sh isMember --url ldaps://my-ldap-server.polarity.local  --serviceUser user@polarity.local  --servicePassword p@ssword  --baseDN "CN=Users,DC=polarity,DC=local" --username testuser@polarity.local --password h3llo56
+./active-directory-tester.sh auth --url ldaps://my-ldap-server.polarity.local  --serviceUser user@polarity.local  --servicePassword p@ssword  --baseDN "CN=Users,DC=polarity,DC=local" --username testuser@polarity.local --password h3llo56
 ```
 
 ### Test If a Group Exists
@@ -63,7 +63,7 @@ Sample values:
 Sample values:
 
 ```
-./active-directory-tester.sh isMember --url ldaps://my-ldap-server.polarity.local  --serviceUser user@polarity.local  --servicePassword p@ssword  --baseDN "CN=Users,DC=polarity,DC=local" --group PolarityUsers
+./active-directory-tester.sh groupExists --url ldaps://my-ldap-server.polarity.local  --serviceUser user@polarity.local  --servicePassword p@ssword  --baseDN "CN=Users,DC=polarity,DC=local" --group PolarityUsers
 ```
 
 ### Test if User is Member of a Group
