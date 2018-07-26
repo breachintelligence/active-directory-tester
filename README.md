@@ -19,7 +19,20 @@ Run `npm install` from inside the cloned active-directory-tester folder
 npm install
 ```
 
-If you cannot install the dependencies then you can download the full package from the github repo.
+If you cannot install the dependencies on your sever using `npm isntall` then you can download the full release from the github repo here
+https://github.com/breachintelligence/active-directory-tester/releases
+
+After downloading the full release, upload the `tgz` file to your Polarity Server and untar it
+
+```
+tag -xvzf <file>
+```
+
+Note that to run the below commands you may need to make the `active-directory-tester.sh` script executable
+
+```
+chmod a+x active-directory-tester.sh
+```
 
 ## Commands
 
