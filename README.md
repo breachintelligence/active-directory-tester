@@ -36,7 +36,7 @@ If you cannot install the dependencies then you can download the full package fr
 ### Test If a Group Exists
 
 ```
-./active-directory-tester.sh groupExists --url ldap://54.152.51.48 --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --group PolarityUsers
+./active-directory-tester.sh groupExists --url ldap://54.152.51.48 --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --group <group>
 ```
 
 ### Test if User is Member of a Group
