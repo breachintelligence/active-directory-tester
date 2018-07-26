@@ -38,7 +38,9 @@ chmod a+x active-directory-tester.sh
 
 ### Show Help
 
+```
 ./active-directory-tester.sh --help
+```
 
 ### Test Authentication for a User
 
@@ -46,10 +48,22 @@ chmod a+x active-directory-tester.sh
 ./active-directory-tester.sh auth --url <url>  --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --username <username>  --password <password>
 ```
 
+Sample values:
+
+```
+./active-directory-tester.sh isMember --url ldaps://my-ldap-server.polarity.local  --serviceUser user@polarity.local  --servicePassword p@ssword  --baseDN "CN=Users,DC=polarity,DC=local" --username testuser@polarity.local --password h3llo56
+```
+
 ### Test If a Group Exists
 
 ```
-./active-directory-tester.sh groupExists --url ldap://54.152.51.48 --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --group <group>
+./active-directory-tester.sh groupExists --url <url> --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --group <group>
+```
+
+Sample values:
+
+```
+./active-directory-tester.sh isMember --url ldaps://my-ldap-server.polarity.local  --serviceUser user@polarity.local  --servicePassword p@ssword  --baseDN "CN=Users,DC=polarity,DC=local" --group PolarityUsers
 ```
 
 ### Test if User is Member of a Group
@@ -58,4 +72,10 @@ chmod a+x active-directory-tester.sh
 ./active-directory-tester.sh isMember --url <url>  --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --username <username>  --group <group>
 ```
 
-> Note that <serviceUser> and <username> options should use the full username (e.g., user@org.com, ORG/user).  The AD tester does not make use of the Principal Name Pattern option found within Polarity.
+Sample values:
+
+```
+./active-directory-tester.sh isMember --url ldaps://my-ldap-server.local  --serviceUser user@polarity.local  --servicePassword p@ssword  --baseDN "CN=Users,DC=polarity,DC=local"  --username testuser@breach.local  --group PolarityUsers
+```
+
+> Note that <serviceUser> and <username> options should use the full username (e.g., `user@org.com`, `ORG/user`).  The AD tester does not make use of the Principal Name Pattern option found within Polarity.
