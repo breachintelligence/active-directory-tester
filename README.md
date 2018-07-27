@@ -34,7 +34,27 @@ Note that to run the below commands you may need to make the `active-directory-t
 chmod a+x active-directory-tester.sh
 ```
 
+The AD tester can be placed anywhere on your Polarity Server and does not need to exist inside `/app`.
+
+
 ## Commands
+
+### General Options
+
+#### --url
+The url for the AD service (e.g., ldaps://my-ldap-server.polarity.local)
+
+#### --serviceUser
+The username for a service account
+
+#### --servicePassword
+The password for the given `serviceUser`
+
+#### --baseDN
+The point from where the AD server will search for users. (e.g., "CN=Users,DC=polarity,DC=local")
+
+#### --acceptUnauthorized
+If this flag is set, the script will ignore SSL errors when connecting to the AD server (default is to not accept SSL errors)
 
 ### Show Help
 
@@ -43,6 +63,12 @@ chmod a+x active-directory-tester.sh
 ```
 
 ### Test Authentication for a User
+
+#### --username
+The username you want to test authentication for
+
+#### --password
+The password for the `username` you want to test authentication for
 
 ```
 ./active-directory-tester.sh auth --url <url>  --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --username <username>  --password <password>
@@ -56,6 +82,10 @@ Sample values:
 
 ### Test If a Group Exists
 
+#### --group
+
+The group you want to test the existence of
+
 ```
 ./active-directory-tester.sh groupExists --url <url> --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --group <group>
 ```
@@ -67,6 +97,12 @@ Sample values:
 ```
 
 ### Test if User is Member of a Group
+
+#### --username
+The username to test
+
+#### --group
+The group you want to test membership of the given `username` in
 
 ```
 ./active-directory-tester.sh isMember --url <url>  --serviceUser <serviceUser>  --servicePassword <servicePassword>  --baseDN <baseND>  --username <username>  --group <group>
