@@ -107,6 +107,8 @@ Sample values:
 #### --username
 The username to test
 
+> Note that the `username` option should use the full username (e.g., `user@org.com`, `ORG/user`).  The AD tester does not make use of the Principal Name Pattern option found within Polarity.
+
 #### --group
 The group you want to test membership of the given `username` in
 
