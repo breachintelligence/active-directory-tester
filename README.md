@@ -47,6 +47,9 @@ The url for the AD service (e.g., ldaps://my-ldap-server.polarity.local)
 #### --serviceUser
 The username for a service account
 
+> Note that `serviceUser` option should use the full username (e.g., `user@org.com`, `ORG/user`).  The AD tester does not make use of the Principal Name Pattern option found within Polarity.
+
+
 #### --servicePassword
 The password for the given `serviceUser`
 
@@ -66,6 +69,9 @@ If this flag is set, the script will ignore SSL errors when connecting to the AD
 
 #### --username
 The username you want to test authentication for
+
+> Note that the `username` option should use the full username (e.g., `user@org.com`, `ORG/user`).  The AD tester does not make use of the Principal Name Pattern option found within Polarity.
+
 
 #### --password
 The password for the `username` you want to test authentication for
@@ -114,4 +120,3 @@ Sample values:
 ./active-directory-tester.sh isMember --url ldaps://my-ldap-server.local  --serviceUser user@polarity.local  --servicePassword p@ssword  --baseDN "CN=Users,DC=polarity,DC=local"  --username testuser@breach.local  --group PolarityUsers
 ```
 
-> Note that <serviceUser> and <username> options should use the full username (e.g., `user@org.com`, `ORG/user`).  The AD tester does not make use of the Principal Name Pattern option found within Polarity.
