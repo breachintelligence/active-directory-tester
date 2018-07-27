@@ -9,7 +9,7 @@ The Active Directory Tester is a command line tool for testing AD settings on Po
 Clone the repo onto your Polarity Server
 
 ```
-git clone git@github.com:breachintelligence/active-directory-tester.git
+git clone https://github.com/breachintelligence/active-directory-tester.git
 ```
 
 Run `npm install` from inside the cloned active-directory-tester folder
