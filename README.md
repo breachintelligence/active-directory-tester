@@ -1,8 +1,8 @@
-# Active Directory Tester
+# Polarity Active Directory Tester
 
 ## Overview
 
-The Active Directory Tester is a command line tool for testing AD settings.  It provides a simple way to test various AD configurations if you are having trouble configuring AD from within the Polarity application.  The AD Tester tool provides extensive debug logging to assist with configuration.  Once you have determined the correct settings you can apply the settings to your Polarity server.
+The Active Directory Tester is a command line tool for testing AD settings on Polarity servers.  It provides a simple way to test various AD configurations if you are having trouble configuring AD from within the Polarity application.  The AD Tester tool provides extensive debug logging to assist with configuration.  Once you have determined the correct settings you can apply the settings to your Polarity server.
 
 ## Installation
 
