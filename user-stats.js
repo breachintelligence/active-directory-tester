@@ -1,68 +1,93 @@
 /*
- * Copyright (c) 2016-2025. ThreatConnect Inc.
+ * Copyright (c) 2016-2022. Breach Intelligence, Inc. (DBA Polarity)
  * All rights reserved
  */
-const {Client} = require('pg');
 
-async function getUsersFromDatabase(polarityEnvFilePath, log) {
-    require('dotenv').config({path: polarityEnvFilePath});
-    let pgClient;
-    let query;
+const { Client } = require('pg');
+const path = require('path');
 
-    try {
-        pgClient = new Client({
-            user: process.env.POLARITY_DB_USER,
-            host: process.env.POLARITY_DB_HOST,
-            database: process.env.POLARITY_DB_DATABASE,
-            password: process.env.POLARITY_DB_PASSWORD,
-            port: process.env.POLARITY_DB_PORT
-        });
+async function getUsersFromDatabase(config) {
+  let pgClient;
+  let query;
 
-        await pgClient.connect();
-        query = await pgClient.query('SELECT id, username, email, last_seen_at, enabled, force_password_reset, created_on, is_admin FROM polarity.users');
-    } catch (error) {
-        log.error(error);
-    } finally {
-        if (pgClient) {
-            await pgClient.end();
-        }
-        return Array.isArray(query.rows) ? query.rows : [];
+  try {
+    pgClient = new Client({
+      user: config.polarity.postgres.user,
+      host: config.polarity.postgres.host,
+      database: config.polarity.postgres.database,
+      password: config.polarity.postgres.password,
+      port: config.polarity.postgres.port
+    });
+
+    await pgClient.connect();
+    query = await pgClient.query(
+      'SELECT id, username, email, last_login, enabled, force_password_reset, created_on, is_admin FROM polarity.users'
+    );
+  } finally {
+    if (pgClient) {
+      await pgClient.end();
     }
+    return Array.isArray(query.rows) ? query.rows : [];
+  }
 }
 
-async function getUserStats(polarityEnvFilePath, log) {
-    const users = await getUsersFromDatabase(polarityEnvFilePath, log);
+async function getUserStats(polarityConfig, polarityServerPath) {
+  require('dotenv').config({ path: path.join(polarityServerPath, '.env') });
 
-    const mergedUsers = users.reduce((accum, user) => {
-        const now = new Date();
-        let activityDays = null;
+  const config = require(polarityConfig);
+  const sessionCache = require(path.join(polarityServerPath, '/lib/session-cache'));
 
-        if (user.last_seen_at) {
-            const activityDiff = now.getTime() - user.last_seen_at.getTime();
-            activityDays = Math.ceil(activityDiff / (1000 * 3600 * 24));
-        }
+  const users = await getUsersFromDatabase(config);
+  const userIds = users.map((user) => user.id);
 
-        accum.push({
-            userId: user.id,
-            username: user.username,
-            email: user.email,
-            enabled: user.enabled,
-            isAdmin: user.is_admin,
-            forcePasswordReset: user.force_password_reset,
-            createdOn: user.created_on,
-            lastActivity: user.last_seen_at,
-            lastActiveDaysAgo: activityDays
-        });
-        return accum;
-    }, []);
+  const lastSeenAtHash = await sessionCache.getLastSeenAtForUsers(userIds.map((id) => `${id}:last_seen`));
 
-    return mergedUsers;
+  const mergedUsers = users.reduce((accum, user) => {
+    const lastActivity = lastSeenAtHash[user.id.toString()]
+      ? new Date(lastSeenAtHash[user.id.toString()].lastSeenAt)
+      : null;
+    const hasActivity = lastActivity !== null ? true : false;
+    const hasLogin = user.last_login !== null;
+    const now = new Date();
+    let activityDays = null;
+    let loginDays = null;
+
+    if (hasActivity) {
+      const activityDiff = now.getTime() - lastActivity.getTime();
+      activityDays = Math.ceil(activityDiff / (1000 * 3600 * 24));
+    }
+
+    if (hasLogin) {
+      const loginDiff = now.getTime() - user.last_login.getTime();
+      loginDays = Math.ceil(loginDiff / (1000 * 3600 * 24));
+    }
+
+    accum.push({
+      userId: user.id,
+      username: user.username,
+      email: user.email,
+      enabled: user.enabled,
+      isAdmin: user.is_admin,
+      forcePasswordReset: user.force_password_reset,
+      lastLogin: user.last_login ? user.last_login.toISOString() : null,
+      createdOn: user.created_on ? user.created_on.toISOString() : null,
+      lastActivity: lastActivity ? lastActivity.toISOString() : null,
+      loginDaysAgo: loginDays,
+      lastActiveDaysAgo: activityDays > loginDays ? activityDays : loginDays
+    });
+    return accum;
+  }, []);
+
+  // const last30Users = mergedUsers.filter(user => {
+  //   return (user.client_days !== null && user.client_days <= 31) || (user.login_days !== null && user.login_days <= 31);
+  // });
+  return mergedUsers;
 }
 
 process.on('uncaughtException', function (err) {
-    console.error(err, 'Uncaught Exception Thrown');
+  console.error(err, 'Uncaught Exception Thrown');
 });
 
 module.exports = {
-    getUserStats
+  getUserStats
 };

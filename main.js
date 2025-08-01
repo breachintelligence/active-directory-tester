@@ -1,5 +1,3 @@
-const fs   = require('fs');
-const path = require('path');
 const bunyan = require('bunyan');
 const { getUserStats } = require('./user-stats');
 const { insertDocument, deleteIndex, createMapping } = require('./elastic');
@@ -8,30 +6,22 @@ const log = bunyan.createLogger({
   level: 'trace'
 });
 
-/**
- * Tests whether a file exists.
- * @param {string} filePath – Absolute or relative path to the file.
- * @returns {Promise<boolean>}
- */
-async function fileExists(filePath) {
-  try {
-    await fs.promises.access(path.resolve(filePath), fs.constants.F_OK);
-    return true;          // no error → file exists (and is reachable)
-  } catch {
-    return false;         // error → file missing or inaccessible
-  }
-}
-
 const refreshCmd = {
   command: '$0',
   desc: 'Insert Polarity user information into an elasticsearch index',
   builder: (yargs) => {
     return yargs
-      .option('polarityEnvFilePath', {
+      .option('polarityPath', {
         type: 'string',
-        default: '/app/.env',
+        default: '/app/polarity-server',
         nargs: 1,
-        describe: 'Path to your Polarity Server .env file'
+        describe: 'Path to your Polarity Server install directory'
+      })
+      .option('polarityConfig', {
+        type: 'string',
+        default: '/app/polarity-server/config/config.js',
+        nargs: 1,
+        describe: 'Path to your Polarity Server config file'
       })
       .option('elasticUrl', {
         type: 'string',
@@ -64,32 +54,19 @@ const refreshCmd = {
         type: 'boolean',
         default: false,
         describe: 'If true, any existing index will be deleted and a new index will be created before populating it'
-      })
-      .option('testOutput', {
-        type: 'boolean',
-        default: false,
-        describe: 'If true, the output from the users table will be logged.  No interaction with Elastic will occur.'
       });
   },
   handler: async (argv) => {
     const {
-      polarityEnvFilePath,
+      polarityPath,
+      polarityConfig,
       elasticUrl,
       elasticUsername,
       elasticPassword,
       elasticApiKey,
       elasticIndex,
-      generateIndex,
-      testOutput
+      generateIndex
     } = argv;
-    
-    const envFileExists = await fileExists(polarityEnvFilePath);
-    if(!envFileExists){
-      log.error(`The env file ${polarityEnvFilePath} does not exist or cannot be read`);
-      return;
-    }      
-    
-    
     const elasticOptions = {
       url: elasticUrl
     };
@@ -103,14 +80,8 @@ const refreshCmd = {
 
     try {
       log.info('Fetching User Information');
-      const users = await getUserStats(polarityEnvFilePath, log);
+      const users = await getUserStats(polarityConfig, polarityPath);
       log.info(`Fetched info for ${users.length} users`);
-      
-      if(testOutput){
-        log.info({ users });
-        return;
-      }
-      
       if (generateIndex) {
         log.info(`Removing existing ${elasticIndex} index`);
         await deleteIndex(elasticIndex, elasticOptions);
