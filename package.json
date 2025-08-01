@@ -2,13 +2,13 @@
   "name": "user-stats-to-elastic",
   "description": "Upload user stats to elastic index",
   "author": "Ed Dorsey <ed@polarity.io>",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "main": "lib/main",
   "private": true,
   "dependencies": {
     "bunyan": "^1.8.15",
     "yargs": "^17.5.1",
-    "postman-request":"^2.88.1-postman.31",
+    "postman-request":"2.88.1-postman.32",
     "pg": "^8.8.0",
     "dotenv": "^16.0.2"
   },
